@@ -4,6 +4,7 @@
 #include "rtl-sdr.h"
 
 #define BYTES_TO_READ (0xFFFF + 1)
+#define LINE_SIZE 100
 
 class ofApp : public ofBaseApp{
 
@@ -19,7 +20,8 @@ class ofApp : public ofBaseApp{
 		unsigned char buffer[BYTES_TO_READ];
 		int bytesRead;
 		rtlsdr_dev_t *device;
-		double phaseData[BYTES_TO_READ / 2];
+		double phaseData[LINE_SIZE + 2];
+		double phaseDataDifference[LINE_SIZE];
 
 		// mesh stuff
 		ofEasyCam cam;
@@ -27,6 +29,7 @@ class ofApp : public ofBaseApp{
 		ofColor colorNear = ofColor::fuchsia;
 		ofColor colorFar = ofColor::navy;
 		float noiseAmp = 40.f;
+		vector<double> ekgLines;
 
 		// not called until update
 		int iIdx = 0;

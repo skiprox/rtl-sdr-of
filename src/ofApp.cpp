@@ -22,7 +22,7 @@ void ofApp::setup(){
 
 		std::cout << "(RET) rtlsdr_reset_buffer = " << rtlsdr_reset_buffer(device) << std::endl;
 	}
-	int rowsColsVal = floor(sqrt(BYTES_TO_READ / 2 - 1));
+	int rowsColsVal = LINE_SIZE;
 	cout << "HOW BIG IS OUR MESH? " << rowsColsVal << endl;
 	// create the mesh
 	for (int r = 0; r<rowsColsVal; r++){
@@ -68,20 +68,28 @@ void ofApp::update(){
 	iIdx = 0;
 	qIdx = 0;
 	// Construct the phase data array
-	for (int i = 0; i < BYTES_TO_READ; i += 2) {
+	for (int i = 0; i < LINE_SIZE * 2 + 2; i += 2) {
 		iData[iIdx++] = buffer[i];
 		qData[qIdx++] = buffer[i + 1];
 	}
-	for (int i = 0; i < BYTES_TO_READ / 2; ++i) {
+	for (int i = 0; i < LINE_SIZE + 2; ++i) {
 		phaseData[i] = atan2(iData[i], qData[i]);
 	}
+	// Construct the phase data difference double,
+	// to use in our ekgLines vector
+	for (int i = 0; i < LINE_SIZE; i++) {
+		phaseDataDifference[i] = (phaseData[i] - phaseData[i + 1]) * 1000.f;
+		ekgLines.push_back(phaseDataDifference[i]);
+	}
+	// Delete from the front of the vector if we're
+	// larger than the mesh
+	if (ekgLines.size() > LINE_SIZE * LINE_SIZE) {
+		for (int i = 0; i < LINE_SIZE; i++) {
+			ekgLines.erase(ekgLines.begin() + i);
+		}
+	}
 
-	// cout << "[";
-	// for (int i = 1; i < BYTES_TO_READ / 2 - 1; i++) {
-	// 	cout << (phaseData[i] - phaseData[i - 1]) * 1000.f << ",";
-	// }
-	// cout << "]" << endl;
-	// cout << "WE READ ONE PIECE OF PHASE DATA" << endl;
+
 	updateZValue();
 	updateColors();
 }
@@ -97,9 +105,9 @@ void ofApp::draw(){
 
 // --------------------------------
 void ofApp::updateZValue(){
-	for (int i = 0; i < mesh.getVertices().size(); i++) {
+	for (int i = 0; i < mesh.getVertices().size(); ++i) {
 		glm::vec3& vertex = mesh.getVertices()[i];
-		vertex.z = (phaseData[i] - phaseData[i - 1]) * 1000.f;
+		vertex.z = ekgLines[i];
 	}
 }
 
