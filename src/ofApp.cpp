@@ -23,7 +23,7 @@ void ofApp::setup(){
 		std::cout << "(RET) rtlsdr_reset_buffer = " << rtlsdr_reset_buffer(device) << std::endl;
 	}
 	int rowsColsVal = floor(sqrt(BYTES_TO_READ / 2 - 1));
-	cout << "HOW MANY BITCH" << rowsColsVal << endl;
+	cout << "HOW BIG IS OUR MESH? " << rowsColsVal << endl;
 	// create the mesh
 	for (int r = 0; r<rowsColsVal; r++){
 	    for (int c = 0; c<rowsColsVal; c++){
