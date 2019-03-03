@@ -25,8 +25,8 @@ void ofApp::setup(){
 	int rowsColsVal = LINE_SIZE;
 	cout << "HOW BIG IS OUR MESH? " << rowsColsVal << endl;
 	// create the mesh
-	for (int r = 0; r<rowsColsVal; r++){
-	    for (int c = 0; c<rowsColsVal; c++){
+	for (int c = 0; c<rowsColsVal; c++){
+	    for (int r = 0; r<rowsColsVal; r++){
 	        
 	        glm::vec3 pos;      // grid centered at 0,0,0
 	        
@@ -98,7 +98,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	cam.begin();
     ofEnableDepthTest();
-    mesh.drawWireframe();
+    mesh.draw();
     ofDisableDepthTest();
     cam.end();
 }
